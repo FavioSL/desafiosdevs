@@ -27,7 +27,7 @@ pipeline {
         stage('Creacion del Usuario'){
             steps {
                 script {
-                    sh "sudo useradd -m -s /bin/bash ${params.login}"
+                    sh "sudo useradd -m -S /bin/bash ${params.login}"
                     echo "Se generó el usuario ${params.login}!!"
                     sh "sudo usermod -aG ${params.departamento} ${params.login}"
                     sh "echo '${params.login}:${PASSWORD}' | sudo chpasswd"
