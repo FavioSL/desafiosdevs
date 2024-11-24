@@ -22,9 +22,11 @@ pipeline {
         stage('Validacion usuario') {
             // Validamos que exista el usaurio, si es así, temrinamos el flujo de la pipeline
             steps {
-                if(validarUsuario(params.login)){
-                    echo "El usuario ya está registrado."
-                    error "El usuario ${params.login} no existe"
+                script {
+                    if(validarUsuario(params.login)){
+                        echo "El usuario ya está registrado."
+                        error "El usuario ${params.login} no existe"
+                    }
                 }
             }
         }
