@@ -19,11 +19,13 @@ pipeline {
                 echo "Apellido: ${params.apellido}"
             }
         }
-        stage('Validacionde usuario') {
+        stage('Validacion usuario') {
             // Validamos que exista el usaurio, si es así, temrinamos el flujo de la pipeline
-            if(validarUsuario(params.login)){
-                echo "El usuario ya está registrado."
-                error "El usuario ${params.login} no existe"
+            steps {
+                if(validarUsuario(params.login)){
+                    echo "El usuario ya está registrado."
+                    error "El usuario ${params.login} no existe"
+                }
             }
         }
         stage('Generacion de password'){
