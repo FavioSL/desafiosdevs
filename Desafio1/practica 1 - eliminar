@@ -5,14 +5,16 @@ pipeline {
     agent any
 
     parameters {
-        string (name: 'idUsuario', defaultValue: '', description: 'Usuario a eliminar')
+        string (name: 'idUsuario', description: 'Usuario a eliminar')
     }
     stages {
         stage('Validacion de datos') {
+            // Le compartimos al usuario que usuario se va a eliminar
             steps {
                echo "se eliminará el usuario: ${params.idUsuario}"
             }
         }
+        // Se valida el usuario, en caso de no existir, terminamos el flujo de la pipeline
         stage('Validar usuario'){
             steps {
                 script {
@@ -23,8 +25,10 @@ pipeline {
                 }
             }
             steps {
+                // Eliminamos el usuario
                 script{
                     sh "sudo userdel ${params.idUsuario}"
+                    echo "Se eliminó el usuario ${params.idUsuario}"
                 }
             }
         }
