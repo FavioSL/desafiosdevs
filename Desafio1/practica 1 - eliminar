@@ -1,0 +1,32 @@
+def validarUsuario(login){
+    return sh(script: "getent passwd ${login}", returnStdout: true).trim().length() > 0;
+}
+pipeline {
+    agent any
+    
+    parameters {
+        string (name: 'idUsuario', defaultValue: '', description: 'Usuario a eliminar')        
+    }
+    stages {
+        stage('Validacion de datos') {
+            steps {
+               echo "se eliminará el usuario: ${params.idUsuario}"
+            }
+        }
+        stage('Validar usuario'){            
+            steps {
+                script {
+                    if(!validarUsuario(params.login)){
+                        echo "El usuario con el id: '${params.idUsuario}' No existe"
+                        error "El usuario ${params.idUsuario} no existe"
+                    }
+                }
+            }
+            steps {
+                script{
+                    sh "sudo userdel ${params.idUsuario}"
+                }
+            }        
+        }
+    }
+}

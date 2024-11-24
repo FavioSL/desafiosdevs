@@ -1,3 +1,6 @@
+def validarUsuario(login){
+    return sh(script: "getent passwd ${login}", returnStdout: true).trim().length() > 0;
+}
 pipeline {
     agent any
     
@@ -26,15 +29,18 @@ pipeline {
         }
         stage('Creacion del Usuario'){
             steps {
-                script {
-                    sh "sudo useradd -m -S /bin/bash ${params.login}"
-                    echo "Se generó el usuario ${params.login}!!"
-                    sh "sudo usermod -aG ${params.departamento} ${params.login}"
-                    sh "echo '${params.login}:${PASSWORD}' | sudo chpasswd"
-                    echo "Se asignó la password ${PASSWORD}"
+                script {                    
+                    if(!validarUsuario(params.login)){
+                        sh "sudo useradd -m -c '${params.nombre} ${params.apellido}' ${params.login}"
+                        echo "Se generó el usuario ${params.login}!!"
+                        sh "sudo usermod -aG ${params.departamento} ${params.login}"
+                        sh "echo '${params.login}:${PASSWORD}' | sudo chpasswd"
+                        echo "Se asignó la password ${PASSWORD}"
+                    }else{
+                        echo "El usuario ya está registrado."
+                    }                    
                 }
-            }
-            
+            }            
         }
     }
 }
