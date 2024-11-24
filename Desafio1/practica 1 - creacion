@@ -3,7 +3,7 @@ def validarUsuario(login){
 }
 pipeline {
     agent any
-    
+
     parameters {
         string (name: 'login', defaultValue: '', description: 'username/login')
         string (name: 'nombre', defaultValue: '', description: 'nombre de usuario')
@@ -19,28 +19,31 @@ pipeline {
                 echo "Apellido: ${params.apellido}"
             }
         }
-        stage('Generacion de password'){            
+        stage('Validacionde usuario') {
+            if(validarUsuario(params.login)){
+                echo "El usuario ya está registrado."
+                error "El usuario ${params.login} no existe"
+            }
+        }
+        stage('Generacion de password'){
             steps {
                 script {
+                    // Se genera la password random usando openssl y lo retornamos al usuario
                     PASSWORD = sh(script: 'openssl rand -base64 12', returnStdout: true).trim()
                     echo "Se generó la pssword ${PASSWORD}"
                 }
-            }            
+            }
         }
         stage('Creacion del Usuario'){
             steps {
-                script {                    
-                    if(!validarUsuario(params.login)){
+                script {
                         sh "sudo useradd -m -c '${params.nombre} ${params.apellido}' ${params.login}"
                         echo "Se generó el usuario ${params.login}!!"
                         sh "sudo usermod -aG ${params.departamento} ${params.login}"
                         sh "echo '${params.login}:${PASSWORD}' | sudo chpasswd"
                         echo "Se asignó la password ${PASSWORD}"
-                    }else{
-                        echo "El usuario ya está registrado."
-                    }                    
                 }
-            }            
+            }
         }
     }
 }

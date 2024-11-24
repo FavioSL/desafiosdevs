@@ -3,9 +3,9 @@ def validarUsuario(login){
 }
 pipeline {
     agent any
-    
+
     parameters {
-        string (name: 'idUsuario', defaultValue: '', description: 'Usuario a eliminar')        
+        string (name: 'idUsuario', defaultValue: '', description: 'Usuario a eliminar')
     }
     stages {
         stage('Validacion de datos') {
@@ -13,7 +13,7 @@ pipeline {
                echo "se eliminará el usuario: ${params.idUsuario}"
             }
         }
-        stage('Validar usuario'){            
+        stage('Validar usuario'){
             steps {
                 script {
                     if(!validarUsuario(params.login)){
@@ -26,7 +26,7 @@ pipeline {
                 script{
                     sh "sudo userdel ${params.idUsuario}"
                 }
-            }        
+            }
         }
     }
 }
